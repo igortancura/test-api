@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Api\Product\ProductFindAction;
+use App\Exceptions\Api\ValidationApiException;
 use App\Http\Requests\Api\Product\ProductStoreRequest;
 use App\Http\Requests\Api\Product\ProductUpdateRequest;
 use App\Http\Resources\Api\Message\ValidMessageResource;
@@ -95,7 +96,7 @@ class ProductController extends Controller
             ),
         ]
     )]
-    public function show(ProductFindAction $findAction, int $id):ProductResource
+    public function show(ProductFindAction $findAction, int $id): ProductResource
     {
         return new ProductResource($findAction->handle($id));
     }
@@ -127,10 +128,16 @@ class ProductController extends Controller
             ),
         ]
     )]
-    public function update(ProductUpdateRequest $request, ProductFindAction $findAction, int $id):ProductResource
+    public function update(ProductUpdateRequest $request, ProductFindAction $findAction, int $id): ProductResource
     {
         $product = $findAction->handle($id);
-        $product->update($request->validated());
+        $data = $request->validated();
+        if (empty($data)) {
+            throw ValidationApiException::withMessages([
+                'message' => 'no data for updated',
+            ]);
+        }
+        $product->update($data);
         return new ProductResource($product->refresh());
     }
 
@@ -156,7 +163,7 @@ class ProductController extends Controller
             ),
         ]
     )]
-    public function destroy(ProductFindAction $findAction, int $id):ValidMessageResource
+    public function destroy(ProductFindAction $findAction, int $id): ValidMessageResource
     {
         ($findAction->handle($id))->delete();
         return new ValidMessageResource(
