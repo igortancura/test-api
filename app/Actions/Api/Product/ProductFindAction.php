@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Api;
+namespace App\Actions\Api\Product;
 
 use App\Exceptions\Api\ValidationApiException;
 use App\Models\Product;

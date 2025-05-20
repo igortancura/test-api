@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\Api\ProductFindAction;
+use App\Actions\Api\Product\ProductFindAction;
 use App\Http\Requests\Api\Product\ProductStoreRequest;
 use App\Http\Requests\Api\Product\ProductUpdateRequest;
-use App\Http\Resources\Api\Product\ProductResource;
-use App\Http\Resources\Api\Product\ProductCollection;
-use App\Models\Product;
 use App\Http\Resources\Api\Message\ValidMessageResource;
+use App\Http\Resources\Api\Product\ProductCollection;
+use App\Http\Resources\Api\Product\ProductResource;
+use App\Models\Product;
 use OpenApi\Attributes as OA;
 
 class ProductController extends Controller

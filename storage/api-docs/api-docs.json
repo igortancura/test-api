@@ -121,6 +121,80 @@
                 }
             }
         },
+        "/api/v1/orders": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "store orders",
+                "description": "store",
+                "operationId": "8cb746eb001b58ac915930ba43cfdf0d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderStoreRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvalidMessageResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "show order",
+                "description": "show",
+                "operationId": "7830784c8e02a11ee0de8d1e6c90a0fd",
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvalidMessageResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/products": {
             "get": {
                 "tags": [
@@ -331,6 +405,28 @@
                 },
                 "type": "object"
             },
+            "OrderStoreRequest": {
+                "required": [
+                    "customer_name",
+                    "customer_email",
+                    "products"
+                ],
+                "properties": {
+                    "customer_name": {
+                        "type": "string"
+                    },
+                    "customer_email": {
+                        "type": "string"
+                    },
+                    "products": {
+                        "type": "array",
+                        "items": {
+                            "example": "{\"product_id\": 27, \"product_quantity\":2}"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "ProductStoreRequest": {
                 "required": [
                     "name",
@@ -424,6 +520,38 @@
                 },
                 "type": "object"
             },
+            "OrderResource": {
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "data": {
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "customer_name": {
+                                "type": "string"
+                            },
+                            "customer_email": {
+                                "type": "string"
+                            },
+                            "total_amount": {
+                                "type": "string"
+                            },
+                            "products": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "ProductCollection": {
                 "properties": {
                     "code": {
@@ -474,6 +602,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
         },
         {
             "name": "Products",

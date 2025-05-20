@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Api;
+namespace App\Actions\Api\Order;
 
 use App\Exceptions\Api\ValidationApiException;
 use App\Models\Order;
@@ -11,7 +11,7 @@ class OrderFindAction
     {
         try {
             $order = Order::findOrFail($id);
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
             throw ValidationApiException::withMessages([
                 'message' => 'Order not found',
             ]);

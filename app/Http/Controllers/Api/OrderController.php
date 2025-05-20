@@ -2,61 +2,72 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\Api\OrderFindAction;
+use App\Actions\Api\Order\OrderCreateAction;
+use App\Actions\Api\Order\OrderFindAction;
 use App\Http\Requests\Api\Order\OrderStoreRequest;
-use App\Http\Requests\Api\Order\OrderUpdateRequest;
 use App\Http\Resources\Api\Order\OrderResource;
-use App\Http\Resources\Api\Order\OrderCollection;
-use App\Models\Order;
-use App\Http\Resources\Api\Message\ValidMessageResource;
+use OpenApi\Attributes as OA;
+
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): OrderCollection
+    #[OA\Post(
+        path: '/api/v1/orders',
+        description: 'store',
+        summary: 'store orders',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/OrderStoreRequest',
+            )
+        ),
+        tags: ['Orders'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Success',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/OrderResource',
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Failure',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/InvalidMessageResource',
+                )
+            ),
+        ]
+    )]
+    public function store(OrderStoreRequest $request, OrderCreateAction $action): OrderResource
     {
-        return new OrderCollection(Order::paginate(config('app.api_paginate')));
+        return new OrderResource($action->handle($request));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(OrderStoreRequest $request): OrderResource
-    {
-        return new OrderResource(Order::create($request->validated()));
-    }
-
-    /**
-     * Display the specified resource.
-     */
+    #[OA\Get(
+        path: '/api/v1/orders/{id}',
+        description: 'show',
+        summary: 'show order',
+        tags: ['Orders'],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Success',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/OrderResource',
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Failure',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/InvalidMessageResource',
+                )
+            ),
+        ]
+    )]
     public function show(OrderFindAction $findAction, int $id): OrderResource
     {
         return new OrderResource($findAction->handle($id));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(OrderUpdateRequest $request, OrderFindAction $findAction, int $id): OrderResource
-    {
-        $order = $findAction->handle($id);
-        $order->update($request->validated());
-        return new OrderResource($order->refresh());
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(OrderFindAction $findAction, int $id): ValidMessageResource
-    {
-        ($findAction->handle($id))->delete();
-        return new ValidMessageResource(
-            [
-                'messages' => ['Order deleted successfully'],
-            ],
-            200
-        );
     }
 }

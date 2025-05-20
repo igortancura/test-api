@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-use Illuminate\Database\Eloquent\Model;
-
-class OrderProduct extends Model
+class OrderProduct extends Pivot
 {
+public $table = 'order_product';
     public $timestamps = false;
     protected $primaryKey = null;
     public $incrementing = false;

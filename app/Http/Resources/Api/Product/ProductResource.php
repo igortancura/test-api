@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Resources\Api\Product;
+
 use App\Http\Resources\Api\ApiResource;
+use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
+
 #[OA\Schema(
     schema: 'ProductResource',
     properties: [
@@ -21,8 +24,16 @@ use OpenApi\Attributes as OA;
     ],
     type: 'object'
 )]
-
 class ProductResource extends ApiResource
 {
+
+    public function toArray(Request $request): array
+    {
+        $result = parent::toArray($request);
+        if (is_null($result['product_quantity'])) {
+            unset($result['product_quantity']);
+        }
+        return $result;
+    }
 
 }

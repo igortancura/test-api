@@ -10,6 +10,10 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $appends = [
+        'product_quantity',
+    ];
+
     public $timestamps = false;
     protected $fillable = [
         'name',
@@ -18,6 +22,12 @@ class Product extends Model
         'stock_quantity'
     ];
     protected $hidden = [
-        'deleted_at'
+        'deleted_at',
+        'pivot'
     ];
+
+    public function getProductQuantityAttribute(): int|null
+    {
+        return empty($this->pivot) ? null : $this->pivot->product_quantity;
+    }
 }
